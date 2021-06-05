@@ -128,20 +128,27 @@ double light_percent_clamp(double val)
 
 int light_mkpath(char *dir, mode_t mode)
 {
-    struct stat sb;
-
-    if(!dir)
+    char *sep, tmp;
     {
-        errno = EINVAL;
-        return -1;
+        struct stat sb;
+
+        if(!dir)
+        {
+            errno = EINVAL;
+            return -1;
+        }
+
+        if(!stat(dir, &sb))
+            return 0;
     }
 
-    if(!stat(dir, &sb))
-        return 0;
+    /* Just set temporary line end to avoid allocation */
+    sep = strrchr(dir, '/');
+    tmp = *sep;
 
-    char *tempdir = strdup(dir);
-    light_mkpath(dirname(tempdir), mode);
-    free(tempdir);
+    *sep = '\0';
+    light_mkpath(dir, mode);
+    *sep = tmp;
     
     return mkdir(dir, mode);
 }
