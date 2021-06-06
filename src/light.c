@@ -239,7 +239,6 @@ static bool _light_parse_arguments(light_context_t *ctx, int argc, char** argv)
     bool need_float_value = false;
     bool need_target = true; // default cmd is get brightness
     bool specified_target = false;
-    snprintf(ctrl_name, sizeof(ctrl_name), "%s", "sysfs/backlight/auto");
     
     while((curr_arg = getopt(argc, argv, "HhVGSLMNPAUTOIv:s:r")) != -1)
     {
@@ -329,6 +328,11 @@ static bool _light_parse_arguments(light_context_t *ctx, int argc, char** argv)
                 need_target = true;
                 break;
         }
+    }
+    
+    if (! specified_target)
+    {
+        snprintf(ctrl_name, sizeof(ctrl_name), "%s", "sysfs/backlight/auto");
     }
 
     if(ctx->run_params.command == NULL)
